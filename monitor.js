@@ -268,7 +268,7 @@ function getCMSAlarm() {
         else {
             //console.log(JSON.stringify(data));
             _.forEach(data.MetricAlarms, function (alarm) {
-                //console.log("Alarm name: " + alarm.AlarmName);
+                console.log("Alarm name: " + alarm.AlarmName);
                 if (alarm.AlarmName === 'cmsHealthyHostCountAlarm') {
                     console.log("Resolving Alarm");
                     deferred.resolve(alarm);
@@ -326,6 +326,7 @@ function fetchAlarmHistory() {
     getCMSAlarm().then(function (alarm) {
         //console.log(JSON.stringify(alarm));
         getAlarmHistory(alarm).then(function (alarmHistory) {
+            console.log("Alarm History: " + JSON.stringify(alarmHistory));
             deferred.resolve(alarmHistory);
         })
     }).catch(function (error) {
