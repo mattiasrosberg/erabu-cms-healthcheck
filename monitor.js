@@ -6,6 +6,7 @@ var https = require('https');
 var moment = require('moment');
 var rp = require('request-promise');
 var url = require("url");
+var request = require('request');
 
 
 var accessKeyId = process.env.ACCESS_KEY_ID;
@@ -126,19 +127,19 @@ function performHealthCheckCMS() {
             //    }
             //};
 
-            var options = {
-                host: proxy.hostname,
-                path: '/',
-                port: proxy.port || 443,
-                method: 'GET',
-                rejectUnauthorized: false,
-                requestCert: true,
-                agent: false,
-                headers: {
-                    "Proxy-Authorization": "Basic " + (new Buffer(proxy.auth).toString("base64")),
-                    "Host" : elb.DNSName
-                }
-            };
+            //var options = {
+            //    host: proxy.hostname,
+            //    path: '/',
+            //    port: proxy.port || 443,
+            //    method: 'GET',
+            //    rejectUnauthorized: false,
+            //    requestCert: true,
+            //    agent: false,
+            //    headers: {
+            //        "Proxy-Authorization": "Basic " + (new Buffer(proxy.auth).toString("base64")),
+            //        "Host" : elb.DNSName
+            //    }
+            //};
 
 
             //var options = {
@@ -158,15 +159,41 @@ function performHealthCheckCMS() {
 
             console.log("URL: " + options.host);
 
-            var req = http.request(options, function (response) {
-                console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
-                deferred.resolve({
-                    statusCode: response.statusCode,
-                    statusMessage: response.statusMessage,
-                });
+            //var req = http.request(options, function (response) {
+            //    console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
+            //    deferred.resolve({
+            //        statusCode: response.statusCode,
+            //        statusMessage: response.statusMessage,
+            //    });
+            //
+            //});
+            //req.end();
 
-            });
-            req.end();
+            var options = {
+                proxy: process.env.QUOTAGUARDSTATIC_URL,
+                url: 'https://' + elb.DNSName,
+                headers: {
+                    'User-Agent': 'node.js'
+                }
+            };
+
+            function callback(error, response, body) {
+                console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
+                if (!error && response.statusCode == 200) {
+                    console.log(body);
+                    deferred.resolve({
+                        statusCode: response.statusCode,
+                        statusMessage: response.statusMessage,
+                    });
+                }
+
+                if(error){
+                    console.log("Error in CMS Check: " + JSON.stringify(error));
+                    deferred.reject(error);
+                }
+            }
+
+            request(options, callback);
 
         }).catch(function (error) {
             console.log("Error: " + JSON.stringify(error));
