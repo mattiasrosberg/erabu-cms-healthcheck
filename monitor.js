@@ -187,7 +187,6 @@ function performHealthCheckCMS() {
                 console.log("Done with CMS Healthcheck. Response: " + (response ? response.statusCode : ''));
 
                 if (!error && response.statusCode == 200) {
-                    console.log(body);
                     deferred.resolve({
                         statusCode: response.statusCode,
                         statusMessage: response.statusMessage,
