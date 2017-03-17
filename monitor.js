@@ -116,13 +116,27 @@ function performHealthCheckCMS() {
             var proxy = url.parse(process.env.QUOTAGUARDSTATIC_URL);
             var target  = url.parse("http://ip.quotaguard.com/");
 
-            options = {
+            //options = {
+            //    host: proxy.hostname,
+            //    port: proxy.port || 80,
+            //    path: target.href,
+            //    headers: {
+            //        "Proxy-Authorization": "Basic " + (new Buffer(proxy.auth).toString("base64")),
+            //        "Host" : target.hostname
+            //    }
+            //};
+
+            var options = {
                 host: proxy.hostname,
-                port: proxy.port || 80,
-                path: target.href,
+                path: '/',
+                port: proxy.port || 443,
+                method: 'GET',
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false,
                 headers: {
                     "Proxy-Authorization": "Basic " + (new Buffer(proxy.auth).toString("base64")),
-                    "Host" : target.hostname
+                    "Host" : elb.DNSName
                 }
             };
 
@@ -144,7 +158,7 @@ function performHealthCheckCMS() {
 
             console.log("URL: " + options.host);
 
-            var req = http.request(options, function (response) {
+            var req = https.request(options, function (response) {
                 console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
                 deferred.resolve({
                     statusCode: response.statusCode,
