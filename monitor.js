@@ -169,9 +169,22 @@ function performHealthCheckCMS() {
             //});
             //req.end();
 
+            var agentOptions;
+            var agent;
+
+            agentOptions = {
+                host: elb.DNSName,
+                port: '443',
+                path: '/',
+                rejectUnauthorized: false
+            }
+
+            agent = new https.Agent(agentOptions);
+
             var options = {
                 proxy: process.env.QUOTAGUARDSTATIC_URL,
                 url: 'https://' + elb.DNSName,
+                agent: agent,
                 headers: {
                     'User-Agent': 'node.js'
                 }
