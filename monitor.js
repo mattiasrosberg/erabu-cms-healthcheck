@@ -169,19 +169,6 @@ function performHealthCheckCMS() {
             //});
             //req.end();
 
-            var agentOptions;
-            var agent;
-
-            agentOptions = {
-                host: elb.DNSName,
-                port: '443',
-                path: '/',
-                requestCert: true,
-                rejectUnauthorized: false
-            }
-
-            agent = new https.Agent(agentOptions);
-
             var options = {
                 proxy: process.env.QUOTAGUARDSTATIC_URL,
                 url: 'https://' + elb.DNSName,
@@ -197,20 +184,20 @@ function performHealthCheckCMS() {
             console.log("URL: " + options.url);
 
             function callback(error, response, body) {
-                console.log("Done with CMS Healthcheck. Response: " + JSON.stringify(response));
-                //if (!error && response.statusCode == 200) {
-                if (!error) {
+                console.log("Done with CMS Healthcheck. Response: " + (response ? response.statusCode : ''));
+
+                if (!error && response.statusCode == 200) {
                     console.log(body);
                     deferred.resolve({
                         statusCode: response.statusCode,
                         statusMessage: response.statusMessage,
                     });
-                }
-
-                if(error){
+                }else {
                     console.log("Error in CMS Check: " + JSON.stringify(error));
                     deferred.reject(error);
                 }
+
+
             }
 
             request(options, callback);
