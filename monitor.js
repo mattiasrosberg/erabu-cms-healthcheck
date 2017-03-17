@@ -177,6 +177,8 @@ function performHealthCheckCMS() {
                 }
             };
 
+            console.log("URL: " + options.url);
+
             function callback(error, response, body) {
                 console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
                 if (!error && response.statusCode == 200) {
