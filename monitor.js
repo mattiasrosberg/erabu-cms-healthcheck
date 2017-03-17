@@ -117,7 +117,7 @@ function performHealthCheckCMS() {
             var target  = url.parse("http://ip.quotaguard.com/");
 
             options = {
-                hostname: proxy.hostname,
+                host: proxy.hostname,
                 port: proxy.port || 80,
                 path: target.href,
                 headers: {
