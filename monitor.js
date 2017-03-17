@@ -5,6 +5,7 @@ var http = require('http');
 var https = require('https');
 var moment = require('moment');
 var rp = require('request-promise');
+var url = require("url");
 
 
 var accessKeyId = process.env.ACCESS_KEY_ID;
@@ -112,16 +113,34 @@ function performHealthCheckCMS() {
         elbWithInstance(instanceId).then(function (elb) {
             console.log("ELB: " + JSON.stringify(elb));
 
-            var options = {
-                host: elb.DNSName,
-                //host: 'www.google.se',
-                path: '/',
-                port: 443,
-                method: 'GET',
-                rejectUnauthorized: false,
-                requestCert: false,
-                agent: false
+            var proxy = url.parse(process.env.QUOTAGUARDSTATIC_URL);
+            var target  = url.parse("http://ip.quotaguard.com/");
+
+            options = {
+                hostname: proxy.hostname,
+                port: proxy.port || 80,
+                path: target.href,
+                headers: {
+                    "Proxy-Authorization": "Basic " + (new Buffer(proxy.auth).toString("base64")),
+                    "Host" : target.hostname
+                }
             };
+
+
+            //var options = {
+            //    host: elb.DNSName,
+            //    //host: 'www.google.se',
+            //    path: '/',
+            //    port: 443,
+            //    method: 'GET',
+            //    rejectUnauthorized: false,
+            //    requestCert: true,
+            //    agent: false,
+            //    headers: {
+            //        "Proxy-Authorization": "Basic " + (new Buffer(proxy.auth).toString("base64")),
+            //        "Host" : target.hostname
+            //    }
+            //};
 
             console.log("URL: " + options.host);
 
