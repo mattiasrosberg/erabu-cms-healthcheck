@@ -119,7 +119,7 @@ function performHealthCheckCMS() {
                 port: 443,
                 method: 'GET',
                 rejectUnauthorized: false,
-                requestCert: true,
+                requestCert: false,
                 agent: false
             };
 
