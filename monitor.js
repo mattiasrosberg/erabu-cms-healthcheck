@@ -184,7 +184,9 @@ function performHealthCheckCMS() {
             var options = {
                 proxy: process.env.QUOTAGUARDSTATIC_URL,
                 url: 'https://' + elb.DNSName,
-                strictSSL: false,
+                agentOptions: {
+                    rejectUnauthorized: false
+                },
                 headers: {
                     'User-Agent': 'node.js'
                 }
