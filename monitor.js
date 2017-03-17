@@ -157,7 +157,7 @@ function performHealthCheckCMS() {
             //    }
             //};
 
-            console.log("URL: " + options.host);
+            //console.log("URL: " + options.host);
 
             //var req = http.request(options, function (response) {
             //    console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
