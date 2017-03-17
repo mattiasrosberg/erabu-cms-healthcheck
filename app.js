@@ -15,6 +15,10 @@ app.get('/', function (req, res) {
             alarmHistoryParagraphs += row;
         }
 
+        if(alarmHistoryParagraphs.length == 0){
+            alarmHistoryParagraphs += "<br></br>\n";
+        }
+
         monitor.performHealthCheck().then(function (result) {
             var color = result[0].value.statusCode === 200 ? 'green' : 'red';
             var html = "<html>\n" +
