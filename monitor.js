@@ -117,7 +117,7 @@ function performHealthCheckCMS() {
             var target  = url.parse("http://ip.quotaguard.com/");
 
             options = {
-                host: proxy.hostname,
+                hostname: proxy.hostname,
                 port: proxy.port || 80,
                 path: target.href,
                 headers: {
@@ -144,7 +144,7 @@ function performHealthCheckCMS() {
 
             console.log("URL: " + options.host);
 
-            var req = https.request(options, function (response) {
+            var req = http.request(options, function (response) {
                 console.log("Done with CMS Healthcheck. " + response.statusCode + " " + response.statusMessage);
                 deferred.resolve({
                     statusCode: response.statusCode,
