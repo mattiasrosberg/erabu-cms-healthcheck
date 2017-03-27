@@ -269,7 +269,7 @@ function getCMSAlarm() {
             //console.log(JSON.stringify(data));
             _.forEach(data.MetricAlarms, function (alarm) {
                 console.log("Alarm name: " + alarm.AlarmName);
-                if (alarm.AlarmName === 'cmsHealthyHostCountAlarm') {
+                if (alarm.AlarmName.indexOf('CmsNoHealthyHostsAlarm') !== -1) {
                     console.log("Resolving Alarm");
                     deferred.resolve(alarm);
                 }
