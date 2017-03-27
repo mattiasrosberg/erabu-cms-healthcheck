@@ -324,7 +324,11 @@ function getAlarmHistory(alarm) {
 function fetchAlarmHistory() {
     var deferred = Q.defer();
     getCMSAlarm().then(function (alarm) {
-        //console.log(JSON.stringify(alarm));
+        if(!alarm){
+            console.log("No CMSHealthyHostsCheck alarm is setup in the CMS environment.");
+            throw "No CMSHealthyHostsCheck alarm is setup in the CMS environment.";
+        }
+
         getAlarmHistory(alarm).then(function (alarmHistory) {
             console.log("Alarm History: " + JSON.stringify(alarmHistory));
             deferred.resolve(alarmHistory);

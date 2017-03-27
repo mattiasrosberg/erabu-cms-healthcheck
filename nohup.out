@@ -87,3 +87,7 @@ CorsParams:	*
 3922:M 27 Mar 13:29:46.046 * Background saving started by pid 16351
 16351:C 27 Mar 13:29:46.050 * DB saved on disk
 3922:M 27 Mar 13:29:46.151 * Background saving terminated with success
+3922:M 27 Mar 14:29:47.051 * 1 changes in 3600 seconds. Saving...
+3922:M 27 Mar 14:29:47.053 * Background saving started by pid 16854
+16854:C 27 Mar 14:29:47.059 * DB saved on disk
+3922:M 27 Mar 14:29:47.154 * Background saving terminated with success
