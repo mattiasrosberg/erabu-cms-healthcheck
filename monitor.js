@@ -63,15 +63,34 @@ function cmsEC2Instance() {
         }
         else {
             //console.log("Data: " + JSON.stringify(data));
+            var possibleCMSInstances = [];
             _.forEach(data.Reservations, function (reservation) {
                 _.forEach(reservation.Instances, function (instance) {
                     _.forEach(instance.Tags, function (tag) {
                         if (tag.Key === 'Name' && tag.Value.indexOf('erab-Cms') != -1) {
-                            deferred.resolve(instance.InstanceId);
+                            var datum = new Date(instance.LaunchTime);
+                            console.log("LaunchTime: " + JSON.stringify(datum));
+                            possibleCMSInstances.push({
+                                instanceId: instance.InstanceId,
+                                launchTime: instance.LaunchTime
+                            });
                         }
                     });
                 });
             });
+
+            //Return the instance that was started latest
+            if(possibleCMSInstances.length >0) {
+                possibleCMSInstances.sort(function (a, b) {
+                    console.log("A: " + JSON.stringify(a) +"        B: " + JSON.stringify(b));
+                    return b.launchTime.toString().localeCompare(a.launchTime.toString());
+                });
+
+                console.log("RESOLVED Instance: " + JSON.stringify(possibleCMSInstances[0].instanceId));
+                deferred.resolve(possibleCMSInstances[0].instanceId);
+            }else{
+                deferred.reject("Cms EC2 Instance could not be found");
+            }
 
         }
     });
@@ -87,11 +106,11 @@ function elbWithInstance(instanceId) {
 
     elb.describeLoadBalancers(params, function (err, data) {
         if (err) {
-            console.log(err, err.stack); // an error occurred
+            console.log("Describe loadbalancers error: " + JSON.stringify(err)); // an error occurred
             deferred.reject(error);
         }
         else {
-            //console.log("Data: " + JSON.stringify(data));
+            console.log("Data: " + JSON.stringify(data));
             _.forEach(data.LoadBalancerDescriptions, function (loadBalancerDesc) {
                 _.forEach(loadBalancerDesc.Instances, function (instance) {
                     console.log("Instance in ELB: " + instance.InstanceId);
@@ -101,6 +120,8 @@ function elbWithInstance(instanceId) {
                 });
             });
 
+            //console.log("Couldn't find ELB for instance..." + instanceId);
+            //deferred.reject("Couldn't find ELB for instance...");
         }
     });
     return deferred.promise;
@@ -110,7 +131,7 @@ function performHealthCheckCMS() {
     var deferred = Q.defer();
     console.log("Performing healthcheck CMS!!!");
     cmsEC2Instance().then(function (instanceId) {
-        console.log("InstanceId: " + JSON.stringify(instanceId));
+        console.log("InstanceId: " + instanceId);
         elbWithInstance(instanceId).then(function (elb) {
             console.log("ELB: " + JSON.stringify(elb));
 
